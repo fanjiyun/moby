@@ -515,7 +515,9 @@ func (d *Driver) Remove(id string) error {
 	dir := d.dir(id)
 	lid, err := ioutil.ReadFile(path.Join(dir, "link"))
 	if err == nil {
-		if err := os.RemoveAll(path.Join(d.home, linkDir, string(lid))); err != nil {
+		if len(lid) == 0 {
+			logrus.Errorf("refusing to remove empty link for layer %v", id)
+		} else if err := os.RemoveAll(path.Join(d.home, linkDir, string(lid))); err != nil {
 			logrus.Debugf("Failed to remove link: %v", err)
 		}
 	}
